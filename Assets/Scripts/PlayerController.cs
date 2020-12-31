@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField]
-    private CharacterController cc;
+
     [SerializeField]
     private float moveSpeed;
     [SerializeField]
@@ -13,8 +12,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float gravity;
 
+    private bool isWalking = false;
+
+    private Animator animator;
+    private CharacterController cc;
+
+
     private Vector3 moveDir;
 
+    private void Awake()
+    {
+        animator = GetComponent<Animator>();
+        cc = GetComponent<CharacterController>();
+    }
 
     // Update is called once per frame
     void Update()
@@ -34,8 +44,15 @@ public class PlayerController : MonoBehaviour
         //Rotation
         if(moveDir.x != 0 || moveDir.z != 0) 
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(new Vector3(moveDir.z,0,-moveDir.x)), 0.15f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(new Vector3(moveDir.x,0,moveDir.z)), 0.15f);
+            isWalking = true;
         }
+        else 
+        {
+            isWalking = false;
+        }
+
+        animator.SetBool("isWalking", isWalking);
 
         //Move CharacterController
         cc.Move(moveDir * Time.deltaTime);
